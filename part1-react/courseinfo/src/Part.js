@@ -1,5 +1,5 @@
-const Part = ({part, exercise}) => {
-    return <p>{part} {exercise}</p>
+const Part = ({name, exercises}) => {
+    return <p>{name} {exercises}</p>
 }
 
 export default Part;
