@@ -1,27 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { PersonForm  } from './PersonForm';
 import { Persons } from './Persons';
 import { Filter } from './Filter';
+import { getAllPersons } from './services/persons';
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ]);
+  const [ persons, setPersons ] = useState([]);
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ newPersonName, setNewPersonName ] = useState('');
   const [ showAllPersons, setShowAllPersons ] = useState(true);
 
-  const personsToShow = showAllPersons ? persons : persons.filter((person) =>{
-      console.log(person.name.toLowerCase().includes( newPersonName.toLowerCase()));
+  useEffect(() => {
+    console.log("effect")
+    getAllPersons().then(persons => {
+      setPersons(prevPersons => prevPersons.concat(persons));
+    });
+  }, [])
+
+  const allPersons = [...persons];
+  const personsToShow = showAllPersons ? allPersons : allPersons.filter((person) =>{
     return  person.name.toLowerCase().includes( newPersonName.toLowerCase())});
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log("im here")
     if(!persons.find((person)=>person.name === newName))
     {
-      setPersons([...persons, 
+      setPersons(prevPersons => [...prevPersons, 
                   {
                     name: newName,
                     number: newNumber
@@ -46,6 +50,7 @@ const App = () => {
   }
   const handleSearch = (event) => {
     const value = event.target.value;
+    
     setNewPersonName(prevValue =>value);
     value !== "" ? setShowAllPersons(false) : setShowAllPersons(true);
     
