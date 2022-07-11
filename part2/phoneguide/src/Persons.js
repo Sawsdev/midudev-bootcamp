@@ -1,4 +1,5 @@
-export const Persons = ({persons}) => {
+import { Person } from "./Person"
+export const Persons = ({persons, handleDelete}) => {
     if(!Array.isArray(persons))
     {
         return (<div>
@@ -9,10 +10,7 @@ export const Persons = ({persons}) => {
        
             {
                 persons.map((person) => {
-                    return (<p key={person.name}>
-                            <strong>{person.name}</strong><br/>
-                            {person.number}
-                            </p>);
+                        return (<Person person={person} handleClick={handleDelete} />)
                 })
             }   
     </div>)
