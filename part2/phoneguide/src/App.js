@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { PersonForm  } from './PersonForm';
 import { Persons } from './Persons';
 import { Filter } from './Filter';
+import {Notification} from './Notification';
 import { getAllPersons, createPerson, deletePerson, updatePerson } from './services/persons';
 const App = () => {
   const [ persons, setPersons ] = useState([]);
@@ -9,6 +10,10 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('');
   const [ newPersonName, setNewPersonName ] = useState('');
   const [ showAllPersons, setShowAllPersons ] = useState(true);
+  const [notification, setNotification] = useState({
+    message:'',
+    type:''
+  });
 
   useEffect(() => {
     console.log("effect")
@@ -33,7 +38,16 @@ const App = () => {
       
       createPerson(newPerson).then(response => {
         setPersons(prevPersons => [...prevPersons, newPerson]);
-        console.log(response);
+        setNotification({
+          message:`Added ${response.name}`,
+          type:'success'
+        });
+        setTimeout(() => {
+          setNotification({
+            message: '',
+            type: ''
+          });
+        }, 2500)
       });
       setNewName('');
       setNewNumber('');
@@ -46,7 +60,28 @@ const App = () => {
         foundPerson.number = newNumber;
         updatePerson(foundPerson).then(response => {
           setPersons(response);
-          alert(`${foundPerson.name} phone number updated!`);
+          setNotification({
+            message:`Updated ${foundPerson.name} information`,
+            type:'success'
+          });
+          setTimeout(() => {
+            setNotification({
+              message: '',
+              type: ''
+            });
+          }, 2500)
+        }).catch(error => {
+          console.log(error);
+          setNotification({
+            message:`Information of ${foundPerson.name} has already been removed from server`,
+            type:'error'
+          });
+          setTimeout(() => {
+            setNotification({
+              message: '',
+              type: ''
+            });
+          }, 2500)
         });
 
       }
@@ -81,7 +116,22 @@ const App = () => {
         setPersons(prevPersons => {
             return prevPersons.filter((prevPerson) => (prevPerson.name !== person.name));
         })
-        alert(`${person.name} Ha sido eliminado`);
+        setNotification({
+          message:`${person.name} Ha sido eliminado`,
+          type: 'success'
+        });
+      }).catch(error => {
+        console.log(error);
+        setNotification({
+          message:`Information of ${person.name} has already been removed from server`,
+          type:'error'
+        });
+        setTimeout(() => {
+          setNotification({
+            message: '',
+            type: ''
+          });
+        }, 2500)
       })
     }
   }
@@ -89,6 +139,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message = {notification} />
       <Filter handleSearch={handleSearch} personName={newPersonName} />
       <PersonForm handleChange={handleChange} 
                   handleNumberChange={handleNumberChange} 

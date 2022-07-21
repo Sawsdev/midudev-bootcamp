@@ -31,14 +31,11 @@ export const deletePerson = (id) => {
                     const {data} = response;
                     console.log(data);
                 })
-                .catch(error => {
-                    console.error(error);
-                });
+               
 }
 
 export const updatePerson = (person) => {
     if(!person) return false
-    console.log(`http://localhost:3001/persons/${person.id}`);
     return axios.put(`http://localhost:3001/persons/${person.id}`, person)
                 .then(response => {
                     console.log(response);
